@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kid & Parent Mode</title>
+  <!-- Friendly, highly readable fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root{
+      /* Calm, non‑overstimulating palette with strong contrast for legibility */
+      --bg: #F7FAFC;            /* very light gray-blue */
+      --panel: #FFFFFF;         /* white cards */
+      --ink: #0F172A;           /* dark ink */
+      --muted: #475569;         /* slate */
+      --accent: #2563EB;        /* accessible blue */
+      --focus: #22C55E;         /* visible focus ring */
+
+      /* soft tile colors (never rely on color alone) */
+      --tile-1:#E6F4FF; /* blue */
+      --tile-2:#E8F8F1; /* teal */
+      --tile-3:#FFF3E6; /* orange */
+      --tile-4:#F3E8FF; /* purple */
+    }
+
+    body{background:var(--bg); color:var(--ink); font-family:'Atkinson Hyperlegible', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
+
+    /* Large, comfy targets */
+    .tile{background:var(--panel); border:2px solid #E2E8F0; border-radius:1.25rem; padding:18px; box-shadow:0 6px 16px rgba(15,23,42,0.05); transition:transform .08s ease, box-shadow .08s ease;}
+    .tile:focus, .tile:focus-visible{outline:4px solid var(--focus); outline-offset:3px;}
+    .tile:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(15,23,42,0.08)}
+    .tile .label{font-size:1.125rem; font-weight:700; letter-spacing:0.2px}
+    .tile .sub{color:var(--muted); font-size:0.95rem}
+
+    /* Pastel backgrounds for visual grouping (alternating) */
+    .soft-1{background:var(--tile-1)}
+    .soft-2{background:var(--tile-2)}
+    .soft-3{background:var(--tile-3)}
+    .soft-4{background:var(--tile-4)}
+
+    /* Tabs */
+    .tab{border:2px solid #C7D2FE;}
+    .tab[aria-selected="true"]{background:var(--accent); color:white; border-color:var(--accent)}
+
+    /* Big icons */
+    .ph{font-size:28px}
+
+    /* Accessibility helpers */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+  </style>
+</head>
+<body>
+  <div class="max-w-7xl mx-auto p-6 space-y-8">
+    <!-- Header -->
+    <div class="text-center space-y-1">
+      <h1 class="text-3xl md:text-4xl font-bold tracking-tight" style="font-family:'Fredoka', system-ui, sans-serif">Kid & Parent Mode</h1>
+      <p class="text-gray-600">Simple, calm screens for kids and caregivers.</p>
+      <div class="flex items-center justify-center space-x-3 text-sm text-gray-600">
+        <button id="fontMinus" class="px-3 py-1 bg-white border rounded-lg">A−</button>
+        <span>Text size</span>
+        <button id="fontPlus" class="px-3 py-1 bg-white border rounded-lg">A+</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex justify-center mb-4">
+      <button id="tabKid" class="tab px-6 py-2 font-semibold rounded-l-xl" role="tab" aria-selected="true" aria-controls="kidPanel">Kid Mode</button>
+      <button id="tabParent" class="tab px-6 py-2 font-semibold rounded-r-xl bg-white" role="tab" aria-selected="false" aria-controls="parentPanel">Parent Mode</button>
+    </div>
+
+    <!-- Kid Mode -->
+    <section id="kidPanel" role="tabpanel" aria-labelledby="tabKid">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <button class="tile soft-1 text-left" aria-label="AAC (Tap to talk)"><div class="flex items-center space-x-3"><i class="ph ph-chat-text"></i><span class="label">AAC</span></div><p class="sub mt-1">Tap‑to‑talk board</p></button>
+        <button class="tile soft-2 text-left" aria-label="Speech practice"><div class="flex items-center space-x-3"><i class="ph ph-speaker-high"></i><span class="label">Speech</span></div><p class="sub mt-1">Practice sounds</p></button>
+        <button class="tile soft-3 text-left" aria-label="Flash cards"><div class="flex items-center space-x-3"><i class="ph ph-cards"></i><span class="label">Flash Cards</span></div><p class="sub mt-1">Picture words</p></button>
+        <button class="tile soft-4 text-left" aria-label="Reading"><div class="flex items-center space-x-3"><i class="ph ph-book"></i><span class="label">Reading</span></div><p class="sub mt-1">Stories & phonics</p></button>
+        <button class="tile soft-1 text-left" aria-label="Games"><div class="flex items-center space-x-3"><i class="ph ph-game-controller"></i><span class="label">Games</span></div><p class="sub mt-1">Learning play</p></button>
+        <button class="tile soft-2 text-left" aria-label="Journal"><div class="flex items-center space-x-3"><i class="ph ph-notebook"></i><span class="label">Journal</span></div><p class="sub mt-1">Daily notes</p></button>
+        <button class="tile soft-3 text-left" aria-label="Daily routine"><div class="flex items-center space-x-3"><i class="ph ph-calendar-check"></i><span class="label">Daily Routine</span></div><p class="sub mt-1">First/Then steps</p></button>
+        <button class="tile soft-4 text-left" aria-label="Goals"><div class="flex items-center space-x-3"><i class="ph ph-flag"></i><span class="label">Goals</span></div><p class="sub mt-1">Stars & rewards</p></button>
+        <button class="tile soft-1 text-left" aria-label="Drawing"><div class="flex items-center space-x-3"><i class="ph ph-pencil"></i><span class="label">Drawing</span></div><p class="sub mt-1">Create art</p></button>
+        <button class="tile soft-2 text-left" aria-label="Coloring"><div class="flex items-center space-x-3"><i class="ph ph-paint-brush"></i><span class="label">Color</span></div><p class="sub mt-1">Coloring pages</p></button>
+        <button class="tile soft-3 text-left" aria-label="School"><div class="flex items-center space-x-3"><i class="ph ph-graduation-cap"></i><span class="label">School</span></div><p class="sub mt-1">Homework hub</p></button>
+        <button class="tile soft-4 text-left" aria-label="Help"><div class="flex items-center space-x-3"><i class="ph ph-life-buoy"></i><span class="label">Help</span></div><p class="sub mt-1">Ask for help</p></button>
+      </div>
+    </section>
+
+    <!-- Parent Mode -->
+    <section id="parentPanel" class="hidden" role="tabpanel" aria-labelledby="tabParent">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <button class="tile soft-1 text-left" aria-label="Progress"><div class="flex items-center space-x-3"><i class="ph ph-chart-bar"></i><span class="label">Progress</span></div><p class="sub mt-1">Milestones & data</p></button>
+        <button class="tile soft-2 text-left" aria-label="Pictures"><div class="flex items-center space-x-3"><i class="ph ph-image"></i><span class="label">Pictures</span></div><p class="sub mt-1">Uploads & gallery</p></button>
+        <button class="tile soft-3 text-left" aria-label="Meltdowns tracker"><div class="flex items-center space-x-3"><i class="ph ph-warning"></i><span class="label">Meltdowns Tracker</span></div><p class="sub mt-1">ABC log</p></button>
+        <button class="tile soft-4 text-left" aria-label="Triggers"><div class="flex items-center space-x-3"><i class="ph ph-warning"></i><span class="label">Triggers</span></div><p class="sub mt-1">What to avoid</p></button>
+        <button class="tile soft-1 text-left" aria-label="Foods"><div class="flex items-center space-x-3"><i class="ph ph-fork-knife"></i><span class="label">Foods</span></div><p class="sub mt-1">Safe / no‑go list</p></button>
+        <button class="tile soft-2 text-left" aria-label="School admin"><div class="flex items-center space-x-3"><i class="ph ph-graduation-cap"></i><span class="label">School</span></div><p class="sub mt-1">IEP & notes</p></button>
+        <button class="tile soft-3 text-left" aria-label="Medical"><div class="flex items-center space-x-3"><i class="ph ph-stethoscope"></i><span class="label">Medical</span></div><p class="sub mt-1">Docs & meds</p></button>
+        <button class="tile soft-4 text-left" aria-label="Clothes"><div class="flex items-center space-x-3"><i class="ph ph-t-shirt"></i><span class="label">Clothes</span></div><p class="sub mt-1">Sizes & prefs</p></button>
+        <button class="tile soft-1 text-left" aria-label="Community chat"><div class="flex items-center space-x-3"><i class="ph ph-users"></i><span class="label">Community Chat</span></div><p class="sub mt-1">Parents & pros</p></button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-sm text-gray-500 pt-6">
+      Built with care for neurodiverse kids & families.
+    </footer>
+  </div>
+
+  <script>
+    // Simple tabs
+    const tabKid = document.getElementById('tabKid');
+    const tabParent = document.getElementById('tabParent');
+    const kidPanel = document.getElementById('kidPanel');
+    const parentPanel = document.getElementById('parentPanel');
+
+    function setTab(which){
+      const isKid = which === 'kid';
+      tabKid.setAttribute('aria-selected', isKid);
+      tabParent.setAttribute('aria-selected', !isKid);
+      kidPanel.classList.toggle('hidden', !isKid);
+      parentPanel.classList.toggle('hidden', isKid);
+    }
+    tabKid.addEventListener('click', ()=>setTab('kid'));
+    tabParent.addEventListener('click', ()=>setTab('parent'));
+
+    // Adjustable text size for accessibility
+    let base = 100; // percent
+    document.getElementById('fontPlus').onclick = ()=>{ base = Math.min(140, base+10); document.documentElement.style.fontSize = base+'%'; };
+    document.getElementById('fontMinus').onclick = ()=>{ base = Math.max(90, base-10); document.documentElement.style.fontSize = base+'%'; };
+  </script>
+</body>
+</html>

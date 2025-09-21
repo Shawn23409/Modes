@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TogetherMind Spectrum – Clickable Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root{
+      --bg:#F7FAFC; --card:#FFFFFF; --ink:#0F172A; --muted:#475569; --accent:#2563EB; --border:#E2E8F0;
+      --soft1:#E6F4FF; --soft2:#E8F8F1; --soft3:#FFF3E6; --soft4:#F3E8FF; --focus:#22C55E;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    .hero{display:grid;gap:6px;justify-items:center;text-align:center;padding:6px 0 10px}
+    .hero h1{font-family:'Fredoka',system-ui,sans-serif;font-size:clamp(26px,4vw,40px);margin:0}
+    .hero p{margin:0;color:var(--muted)}
+    .tabs{display:flex;justify-content:center;gap:10px;margin:8px 0 14px}
+    .tab{border:2px solid #C7D2FE;padding:10px 16px;border-radius:12px;font-weight:700;background:white;cursor:pointer}
+    .tab[aria-selected="true"]{background:var(--accent);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:12px}
+    @media(min-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .tile{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:14px;box-shadow:0 8px 18px rgba(0,0,0,.05);cursor:pointer}
+    .tile:focus{outline:4px solid var(--focus);outline-offset:3px}
+    .soft1{background:var(--soft1)} .soft2{background:var(--soft2)} .soft3{background:var(--soft3)} .soft4{background:var(--soft4)}
+    .row{display:flex;align-items:center;gap:10px}
+    .row i{font-size:26px}
+    .label{font-weight:800}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .hidden{display:none}
+
+    /* Workspace / drawer */
+    .drawer{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;align-items:center;justify-content:center;padding:16px}
+    .drawer.show{display:flex}
+    .panel{width:min(900px,96vw);max-height:92vh;overflow:auto;background:#fff;border:2px solid var(--border);border-radius:18px;box-shadow:0 25px 60px rgba(0,0,0,.25)}
+    .panel-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:2px solid var(--border);position:sticky;top:0;background:#fff;border-radius:18px 18px 0 0}
+    .panel-header .title{font-weight:900}
+    .panel-body{padding:14px;display:grid;gap:12px}
+    .close{margin-left:auto;border:2px solid var(--border);background:#fff;padding:6px 10px;border-radius:999px;cursor:pointer}
+    input, textarea, select, button{font:inherit}
+    input, textarea, select{width:100%;padding:10px;border:2px solid var(--border);border-radius:12px}
+    button.primary{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .chip{border:2px solid var(--border);background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer}
+
+    /* Small helpers */
+    .rowc{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .list{display:grid;gap:8px}
+    .box{border:2px solid var(--border);border-radius:12px;padding:10px;background:#fff}
+    .progress{height:10px;background:#EEF2FF;border-radius:999px;overflow:hidden}
+    .bar{height:100%;background:var(--accent);width:0%}
+    canvas{border:2px solid var(--border);border-radius:12px;background:#fff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>TogetherMind Spectrum</h1>
+      <p>Kid Mode for learning • Parent Mode for organizing</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button id="tabKid" class="tab" aria-selected="true" aria-controls="kidPanel">Kid Mode</button>
+      <button id="tabParent" class="tab" aria-selected="false" aria-controls="parentPanel">Parent Mode</button>
+    </div>
+
+    <!-- KID MODE -->
+    <section id="kidPanel" role="tabpanel" aria-labelledby="tabKid">
+      <div class="grid">
+        <div class="tile soft1" data-app="aac"><div class="row"><i class="ph ph-chat-text"></i><span class="label">AAC</span></div><p class="sub">Tap‑to‑talk board</p></div>
+        <div class="tile soft2" data-app="speech"><div class="row"><i class="ph ph-speaker-high"></i><span class="label">Speech</span></div><p class="sub">Practice sounds</p></div>
+        <div class="tile soft3" data-app="flash"><div class="row"><i class="ph ph-cards"></i><span class="label">Flash Cards</span></div><p class="sub">Picture words</p></div>
+        <div class="tile soft4" data-app="reading"><div class="row"><i class="ph ph-book"></i><span class="label">Reading</span></div><p class="sub">Stories & phonics</p></div>
+        <div class="tile soft1" data-app="games"><div class="row"><i class="ph ph-game-controller"></i><span class="label">Games</span></div><p class="sub">Find the emoji</p></div>
+        <div class="tile soft2" data-app="journal"><div class="row"><i class="ph ph-notebook"></i><span class="label">Journal</span></div><p class="sub">Daily notes</p></div>
+        <div class="tile soft3" data-app="routine"><div class="row"><i class="ph ph-calendar-check"></i><span class="label">Daily Routine</span></div><p class="sub">First/Then steps</p></div>
+        <div class="tile soft4" data-app="goals"><div class="row"><i class="ph ph-star"></i><span class="label">Goals</span></div><p class="sub">Stars & rewards</p></div>
+        <div class="tile soft1" data-app="drawing"><div class="row"><i class="ph ph-pencil"></i><span class="label">Drawing</span></div><p class="sub">Create art</p></div>
+        <div class="tile soft2" data-app="coloring"><div class="row"><i class="ph ph-paint-brush"></i><span class="label">Color</span></div><p class="sub">Fill shapes</p></div>
+        <div class="tile soft3" data-app="school"><div class="row"><i class="ph ph-graduation-cap"></i><span class="label">School</span></div><p class="sub">Homework hub</p></div>
+        <div class="tile soft4" data-app="help"><div class="row"><i class="ph ph-life-buoy"></i><span class="label">Help</span></div><p class="sub">Ask for help</p></div>
+      </div>
+    </section>
+
+    <!-- PARENT MODE -->
+    <section id="parentPanel" class="hidden" role="tabpanel" aria-labelledby="tabParent">
+      <div class="grid">
+        <div class="tile soft1" data-app="progress"><div class="row"><i class="ph ph-chart-bar"></i><span class="label">Progress</span></div><p class="sub">Milestones & data</p></div>
+        <div class="tile soft2" data-app="pictures"><div class="row"><i class="ph ph-image"></i><span class="label">Pictures</span></div><p class="sub">Uploads & gallery</p></div>
+        <div class="tile soft3" data-app="meltdowns"><div class="row"><i class="ph ph-warning"></i><span class="label">Meltdowns Tracker</span></div><p class="sub">ABC log</p></div>
+        <div class="tile soft4" data-app="triggers"><div class="row"><i class="ph ph-warning"></i><span class="label">Triggers</span></div><p class="sub">What to avoid</p></div>
+        <div class="tile soft1" data-app="foods"><div class="row"><i class="ph ph-fork-knife"></i><span class="label">Foods</span></div><p class="sub">Safe & no‑go</p></div>
+        <div class="tile soft2" data-app="iep"><div class="row"><i class="ph ph-graduation-cap"></i><span class="label">School</span></div><p class="sub">IEP & notes</p></div>
+        <div class="tile soft3" data-app="medical"><div class="row"><i class="ph ph-stethoscope"></i><span class="label">Medical</span></div><p class="sub">Docs & meds</p></div>
+        <div class="tile soft4" data-app="clothes"><div class="row"><i class="ph ph-t-shirt"></i><span class="label">Clothes</span></div><p class="sub">Sizes & prefs</p></div>
+        <div class="tile soft1" data-app="chat"><div class="row"><i class="ph ph-users"></i><span class="label">Community Chat</span></div><p class="sub">Parents & pros</p></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Drawer / Workspace -->
+  <div id="drawer" class="drawer" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="workTitle">
+      <div class="panel-header">
+        <i id="workIcon" class="ph"></i>
+        <div id="workTitle" class="title"></div>
+        <button class="close" id="closeBtn"><i class="ph ph-x"></i> Close</button>
+      </div>
+      <div class="panel-body" id="workspace"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ---- TAB LOGIC ---- */
+    const tabKid = document.getElementById('tabKid');
+    const tabParent = document.getElementById('tabParent');
+    const kidPanel = document.getElementById('kidPanel');
+    const parentPanel = document.getElementById('parentPanel');
+    function setTab(which){
+      const isKid = which === 'kid';
+      tabKid.setAttribute('aria-selected', isKid);
+      tabParent.setAttribute('aria-selected', !isKid);
+      kidPanel.classList.toggle('hidden', !isKid);
+      parentPanel.classList.toggle('hidden', isKid);
+    }
+    tabKid.addEventListener('click', ()=>setTab('kid'));
+    tabParent.addEventListener('click', ()=>setTab('parent'));
+
+    /* ---- ROUTER ---- */
+    const drawer = document.getElementById('drawer');
+    const workspace = document.getElementById('workspace');
+    const workTitle = document.getElementById('workTitle');
+    const workIcon = document.getElementById('workIcon');
+    const closeBtn = document.getElementById('closeBtn');
+    closeBtn.onclick = ()=> drawer.classList.remove('show');
+
+    function openApp(title, icon, renderFn){
+      workTitle.textContent = title;
+      workIcon.className = 'ph ' + icon;
+      workspace.innerHTML = '';
+      renderFn(workspace);
+      drawer.classList.add('show');
+    }
+
+    /* ---- HELPERS ---- */
+    const speak = (text)=>{
+      try{ const u = new SpeechSynthesisUtterance(text); u.rate = 0.95; speechSynthesis.speak(u);}catch(e){ alert('Speech unavailable on this device.'); }
+    };
+    const save = (k,v)=>localStorage.setItem(k, JSON.stringify(v));
+    const load = (k,def)=> JSON.parse(localStorage.getItem(k) || JSON.stringify(def));
+
+    /* ---- APPS (Kid Mode) ---- */
+
+    // AAC board
+    function appAAC(node){
+      const phrases = ['Hi','I need help','Bathroom','I am hungry','Yes','No','Thank you','Break please','All done','I feel happy','I feel sad','Headphones'];
+      const grid = document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(auto-fill,minmax(140px,1fr))'; grid.style.gap='8px';
+      phrases.forEach(p=>{
+        const b = document.createElement('button'); b.className = 'chip'; b.textContent = p;
+        b.onclick = ()=> speak(p);
+        grid.appendChild(b);
+      });
+      node.appendChild(el('p','Tap a button to speak.'));
+      node.appendChild(grid);
+    }
+
+    // Speech practice
+    function appSpeech(node){
+      const sounds = ['ma','pa','ba','ta','da','ga','ka','s','sh','ch','r','l'];
+      node.appendChild(el('p','Practice sounds — it will speak the sound you tap.'));
+      const row = document.createElement('div'); row.className='chips';
+      sounds.forEach(s=>{ const b=chip(s); b.onclick=()=>speak(s); row.appendChild(b); });
+      node.appendChild(row);
+    }
+
+    // Flash cards
+    function appFlash(node){
+      const cards = [
+        {w:'APPLE', emo:'🍎'}, {w:'DOG', emo:'🐶'}, {w:'CAR', emo:'🚗'},
+        {w:'HOUSE', emo:'🏠'}, {w:'STAR', emo:'⭐'}, {w:'BALL', emo:'⚽'}
+      ];
+      let i = 0;
+      const card = document.createElement('div'); card.className='box'; card.style.textAlign='center';
+      const big = document.createElement('div'); big.style.fontSize='64px'; big.textContent = cards[i].emo;
+      const word = document.createElement('div'); word.style.fontSize='28px'; word.style.fontWeight='900'; word.style.letterSpacing='2px'; word.textContent = cards[i].w;
+      const row = document.createElement('div'); row.className='rowc';
+      const prev = btn('◀ Prev', ()=>{ i=(i-1+cards.length)%cards.length; update(); });
+      const hear = btn('🔊 Say it', ()=>speak(cards[i].w));
+      const next = btn('Next ▶', ()=>{ i=(i+1)%cards.length; update(); });
+      [big,word].forEach(x=>card.appendChild(x));
+      [prev,hear,next].forEach(x=>row.appendChild(x));
+      node.append(card,row);
+      function update(){ big.textContent = cards[i].emo; word.textContent = cards[i].w; }
+    }
+
+    // Reading
+    function appReading(node){
+      const story = 'Sam has a red hat. The hat is big. Sam tips the hat to the sun. "Hello, sun!" The sun smiles. Sam feels brave.';
+      const t = document.createElement('div'); t.className='box'; t.textContent = story;
+      const readBtn = btn('🔊 Read aloud', ()=>speak(story));
+      node.append(t, readBtn);
+    }
+
+    // Games – find the emoji
+    function appGames(node){
+      const emojis = ['😀','🐶','🚗','🌈','⭐','🍎','🦖','🎈'];
+      const target = emojis[Math.floor(Math.random()*emojis.length)];
+      node.appendChild(el('p','Find the hidden emoji: ' + target));
+      const grid = document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(4,1fr)'; grid.style.gap='8px';
+      for(let i=0;i<16;i++){
+        const b = document.createElement('button'); b.className='box'; b.style.fontSize='28px'; b.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        b.onclick = ()=>{ if(b.textContent===target){ b.style.background='#DCFCE7'; speak('Great job!'); } else { b.style.background='#FEE2E2'; } };
+        grid.appendChild(b);
+      }
+      node.appendChild(grid);
+    }
+
+    // Journal
+    function appJournal(node){
+      const key='tms_journal';
+      const ta = document.createElement('textarea'); ta.rows=8; ta.placeholder='Today I...'; ta.value = load(key,'');
+      const saveBtn = btn('💾 Save', ()=>{ save(key, ta.value); alert('Saved.'); });
+      node.append(ta, saveBtn);
+    }
+
+    // Daily Routine
+    function appRoutine(node){
+      const key='tms_routine';
+      const steps = load(key, [
+        {t:'Wake up',done:false},{t:'Brush teeth',done:false},{t:'Eat breakfast',done:false},{t:'Put on shoes',done:false},{t:'Bus to school',done:false}
+      ]);
+      const list = document.createElement('div'); list.className='list';
+      const prog = document.createElement('div'); prog.className='progress'; const bar = document.createElement('div'); bar.className='bar'; prog.appendChild(bar);
+      function render(){
+        list.innerHTML='';
+        steps.forEach((s,idx)=>{
+          const row = document.createElement('label'); row.className='rowc box';
+          const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=s.done;
+          cb.onchange = ()=>{ steps[idx].done=cb.checked; update(); };
+          const sp = document.createElement('div'); sp.textContent = s.t;
+          row.append(cb, sp); list.appendChild(row);
+        });
+        const pct = Math.round(100*steps.filter(x=>x.done).length/steps.length); bar.style.width=pct+'%';
+        save(key, steps);
+      }
+      function update(){ render(); }
+      render();
+      node.append(prog, list);
+    }
+
+    // Goals
+    function appGoals(node){
+      const key='tms_stars';
+      let stars = load(key, 0);
+      const big = document.createElement('div'); big.style.fontSize='42px'; big.textContent = '⭐'.repeat(Math.min(stars,10));
+      const add = btn('Add star', ()=>{ stars++; save(key,stars); update(); });
+      const reset = btn('Reset', ()=>{ stars=0; save(key,stars); update(); });
+      function update(){ big.textContent='⭐'.repeat(Math.min(stars,10)) + (stars>10? ' +' + (stars-10):''); }
+      update(); node.append(big, el('p','Earn stars for great effort.'), newLine(), add, reset);
+    }
+
+    // Drawing
+    function appDrawing(node){
+      const c = document.createElement('canvas'); c.width=760; c.height=420;
+      const ctx = c.getContext('2d'); ctx.lineWidth=4; ctx.lineCap='round';
+      let drawing=false;
+      c.onpointerdown=(e)=>{drawing=true; ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY)};
+      c.onpointermove=(e)=>{ if(!drawing) return; ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); };
+      c.onpointerup=()=>{drawing=false};
+      const clear = btn('Clear', ()=>{ ctx.clearRect(0,0,c.width,c.height); });
+      const dl = btn('Download PNG', ()=>{ const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='drawing.png'; a.click(); });
+      node.append(c, newLine(), clear, dl);
+    }
+
+    // Coloring (very simple shapes)
+    function appColoring(node){
+      node.appendChild(el('p','Tap a color, then a shape.'));
+      const colors = ['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#111827'];
+      let current = colors[0];
+      const row = document.createElement('div'); row.className='rowc';
+      colors.forEach(col=>{ const b=chip(''); b.style.background=col; b.style.width='32px'; b.style.height='32px'; b.onclick=()=>{ current=col; }; row.appendChild(b); });
+      const shapes = document.createElement('div'); shapes.style.display='grid'; shapes.style.gridTemplateColumns='repeat(3,120px)'; shapes.style.gap='8px';
+      ['square','circle','triangle','heart','star','oval'].forEach(name=>{
+        const s = document.createElement('div'); s.className='box'; s.style.height='100px'; s.style.display='grid'; s.style.placeItems='center'; s.textContent=name;
+        s.onclick=()=>{ s.style.background=current; s.style.color='#fff'; };
+        shapes.appendChild(s);
+      });
+      node.append(row, shapes);
+    }
+
+    // School hub
+    function appSchool(node){
+      const key='tms_hw';
+      const items = load(key, []);
+      const input = document.createElement('input'); input.placeholder='Add homework...';
+      const add = btn('Add', ()=>{ if(!input.value.trim()) return; items.push({t:input.value,done:false}); input.value=''; render(); });
+      const list = document.createElement('div'); list.className='list';
+      function render(){
+        list.innerHTML=''; items.forEach((it,i)=>{
+          const row = document.createElement('label'); row.className='rowc box';
+          const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = it.done;
+          cb.onchange=()=>{ items[i].done=cb.checked; save(key,items); };
+          const span=document.createElement('span'); span.textContent=it.t;
+          row.append(cb, span); list.appendChild(row);
+        }); save(key,items);
+      }
+      render();
+      node.append(el('div','Homework hub'), input, add, list);
+    }
+
+    // Help
+    function appHelp(node){
+      const input = document.createElement('textarea'); input.rows=4; input.placeholder='What help do you need?';
+      const send = btn('Send', ()=>{ alert('Help request sent: '+ input.value); input.value=''; });
+      node.append(el('p','Ask for help from your grown‑up.'), input, send);
+    }
+
+    /* ---- APPS (Parent Mode) ---- */
+
+    function appProgress(node){
+      const key='tms_progress';
+      const checks = load(key, {reading:false,speech:false,selfcare:false});
+      const box = document.createElement('div'); box.className='list';
+      Object.keys(checks).forEach(k=>{
+        const row = document.createElement('label'); row.className='rowc box';
+        const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = checks[k];
+        cb.onchange=()=>{ checks[k]=cb.checked; save(key,checks); };
+        row.append(cb, el('span', k));
+        box.appendChild(row);
+      });
+      node.append(el('p','Simple milestone tracker (demo).'), box);
+    }
+
+    function appPictures(node){
+      const input = document.createElement('input'); input.type='file'; input.multiple=true; input.accept='image/*';
+      const gallery = document.createElement('div'); gallery.style.display='grid'; gallery.style.gridTemplateColumns='repeat(auto-fill,minmax(140px,1fr))'; gallery.style.gap='8px';
+      input.onchange = ()=>{
+        [...input.files].forEach(f=>{
+          const img = document.createElement('img'); img.alt=f.name; img.style.width='100%'; img.style.borderRadius='12px';
+          const reader = new FileReader(); reader.onload = e=> img.src=e.target.result; reader.readAsDataURL(f);
+          gallery.appendChild(img);
+        });
+      };
+      node.append(el('p','Upload pictures to the gallery (stored in memory only).'), input, gallery);
+    }
+
+    function appMeltdowns(node){
+      const key='tms_abc';
+      const logs = load(key, []);
+      const form = document.createElement('div'); form.className='list';
+      const a = inputL('Antecedent','What happened before?');
+      const b = inputL('Behavior','What did the child do?');
+      const c = inputL('Consequence','What happened after?');
+      const saveBtn = btn('Save entry', ()=>{ logs.push({a:a.v(),b:b.v(),c:c.v(),t:new Date().toLocaleString()}); save(key,logs); render(); });
+      const list = document.createElement('div'); list.className='list';
+      function render(){ list.innerHTML = logs.slice().reverse().map(x=>`<div class="box"><strong>${x.t}</strong><div>A: ${x.a}</div><div>B: ${x.b}</div><div>C: ${x.c}</div></div>`).join(''); }
+      render();
+      form.append(a.n,b.n,c.n, saveBtn);
+      node.append(form, list);
+    }
+
+    function appTriggers(node){
+      const key='tms_triggers';
+      const items = load(key, ['Loud noise','Crowds','New places']);
+      const list = document.createElement('div'); list.className='list';
+      const input = document.createElement('input'); input.placeholder='Add trigger...';
+      const add = btn('Add', ()=>{ if(!input.value) return; items.push(input.value); input.value=''; render(); });
+      function render(){ list.innerHTML = items.map((t,i)=>`<div class="box rowc"><span>${t}</span><button class="chip" onclick="this.parentElement.remove(); items.splice(${i},1); save('${key}',items);">Remove</button></div>`).join(''); save(key,items); }
+      render(); node.append(input, add, list);
+    }
+
+    function appFoods(node){
+      const key='tms_foods';
+      const items = load(key, [{t:'Apples',ok:true},{t:'Peanuts',ok:false},{t:'Milk',ok:true}]);
+      const list = document.createElement('div'); list.className='list';
+      function render(){ list.innerHTML=''; items.forEach((x,i)=>{
+        const row = document.createElement('div'); row.className='box rowc';
+        const label = document.createElement('span'); label.textContent=x.t;
+        const toggle = btn(x.ok?'Safe':'No‑go', ()=>{ items[i].ok = !items[i].ok; render(); });
+        toggle.style.background = x.ok? '#22C55E' : '#EF4444'; toggle.style.color='#fff';
+        row.append(label,toggle); list.appendChild(row);
+      }); save(key,items); }
+      const input = document.createElement('input'); input.placeholder='Add food';
+      const add = btn('Add', ()=>{ if(!input.value) return; items.push({t:input.value,ok:true}); input.value=''; render(); });
+      render(); node.append(input, add, list);
+    }
+
+    function appIEP(node){
+      const key='tms_iep';
+      const ta = document.createElement('textarea'); ta.rows=8; ta.placeholder='IEP notes, goals, meeting times...'; ta.value = load(key,'');
+      const saveBtn = btn('Save', ()=>{ save(key,ta.value); alert('Saved'); });
+      node.append(ta, saveBtn);
+    }
+
+    function appMedical(node){
+      const key='tms_meds';
+      const meds = load(key, [{name:'Melatonin',dose:'1mg',time:'8pm'}]);
+      const list = document.createElement('div'); list.className='list';
+      const n = document.createElement('input'); n.placeholder='Name';
+      const d = document.createElement('input'); d.placeholder='Dose';
+      const t = document.createElement('input'); t.placeholder='Time';
+      const add = btn('Add', ()=>{ if(!n.value) return; meds.push({name:n.value,dose:d.value,time:t.value}); n.value=d.value=t.value=''; render(); });
+      function render(){ list.innerHTML = meds.map((m,i)=>`<div class="box rowc"><span>${m.name} — ${m.dose} at ${m.time}</span><button class="chip" onclick="this.parentElement.remove(); meds.splice(${i},1); save('${key}',meds);">Remove</button></div>`).join(''); save(key,meds); }
+      render(); node.append(newLine(), n,d,t, add, list);
+    }
+
+    function appClothes(node){
+      const key='tms_clothes';
+      const sizes = load(key, {shirt:'M',pants:'30',shoes:'9',notes:''});
+      const s = inputL('Shirt','e.g., M', sizes.shirt);
+      const p = inputL('Pants','e.g., 30', sizes.pants);
+      const sh = inputL('Shoes','e.g., 9', sizes.shoes);
+      const notes = inputL('Notes','sensory prefs (soft tags, etc.)', sizes.notes, true);
+      const saveBtn = btn('Save', ()=>{ save(key,{shirt:s.v(),pants:p.v(),shoes:sh.v(),notes:notes.v()}); alert('Saved'); });
+      node.append(s.n, p.n, sh.n, notes.n, saveBtn);
+    }
+
+    function appChat(node){
+      const key='tms_chat';
+      const msgs = load(key, []);
+      const thread = document.createElement('div'); thread.className='list';
+      const input = document.createElement('input'); input.placeholder='Message parents & pros...';
+      const send = btn('Send', ()=>{ if(!input.value) return; msgs.push({me:true,t:input.value,ts:new Date().toLocaleTimeString()}); input.value=''; render(); });
+      function render(){ thread.innerHTML = msgs.map(m=>`<div class="box ${m.me?'':'rowc'}"><span>${m.t||m.text||m.msg||m}</span> <span style="margin-left:auto;color:#64748b">${m.ts || ''}</span></div>`).join(''); save(key,msgs); }
+      render(); node.append(thread, input, send);
+    }
+
+    /* ---- Mini UI builders ---- */
+    function el(tag, text){ const e = document.createElement(tag); if(text) e.textContent=text; return e; }
+    function btn(text, fn){ const b=document.createElement('button'); b.className='primary'; b.textContent=text; b.onclick=fn; return b; }
+    function chip(text){ const b=document.createElement('button'); b.className='chip'; b.textContent=text; return b; }
+    function newLine(){ const d=document.createElement('div'); d.style.height='6px'; return d; }
+    function inputL(label, placeholder='', value='', isBig=false){
+      const wrap = document.createElement('div'); wrap.className='box';
+      const lab = document.createElement('div'); lab.style.fontWeight='800'; lab.textContent=label;
+      const inp = isBig? document.createElement('textarea') : document.createElement('input');
+      if(isBig) inp.rows=4;
+      inp.placeholder = placeholder; inp.value = value || '';
+      wrap.append(lab, inp);
+      return {n:wrap, v:()=>inp.value};
+    }
+
+    /* ---- CLICK HANDLERS ---- */
+    const actions = {
+      aac: ()=>openApp('AAC – Tap to talk','ph-chat-text', appAAC),
+      speech: ()=>openApp('Speech practice','ph-speaker-high', appSpeech),
+      flash: ()=>openApp('Flash cards','ph-cards', appFlash),
+      reading: ()=>openApp('Reading','ph-book', appReading),
+      games: ()=>openApp('Game: Find the emoji','ph-game-controller', appGames),
+      journal: ()=>openApp('Journal','ph-notebook', appJournal),
+      routine: ()=>openApp('Daily routine','ph-calendar-check', appRoutine),
+      goals: ()=>openApp('Goals & stars','ph-star', appGoals),
+      drawing: ()=>openApp('Drawing','ph-pencil', appDrawing),
+      coloring: ()=>openApp('Coloring','ph-paint-brush', appColoring),
+      school: ()=>openApp('School — Homework hub','ph-graduation-cap', appSchool),
+      help: ()=>openApp('Ask for help','ph-life-buoy', appHelp),
+      // Parent
+      progress: ()=>openApp('Progress tracker','ph-chart-bar', appProgress),
+      pictures: ()=>openApp('Pictures — uploads & gallery','ph-image', appPictures),
+      meltdowns: ()=>openApp('Meltdowns — ABC log','ph-warning', appMeltdowns),
+      triggers: ()=>openApp('Triggers','ph-warning', appTriggers),
+      foods: ()=>openApp('Foods — safe / no‑go','ph-fork-knife', appFoods),
+      iep: ()=>openApp('School — IEP & notes','ph-graduation-cap', appIEP),
+      medical: ()=>openApp('Medical — docs & meds','ph-stethoscope', appMedical),
+      clothes: ()=>openApp('Clothes — sizes & prefs','ph-t-shirt', appClothes),
+      chat: ()=>openApp('Community chat (demo)','ph-users', appChat)
+    };
+
+    document.querySelectorAll('[data-app]').forEach(tile=>{
+      tile.addEventListener('click', ()=>{
+        const app = tile.getAttribute('data-app');
+        actions[app] && actions[app]();
+      });
+      tile.setAttribute('tabindex','0');
+      tile.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); tile.click(); } });
+    });
+  </script>
+</body>
+</html>

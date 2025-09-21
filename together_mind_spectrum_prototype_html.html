@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TogetherMind Spectrum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root{
+      --bg:#F8FAFC; --card:#FFFFFF; --ink:#0F172A; --muted:#475569; --blue:#2563EB; --green:#22C55E; --border:#E2E8F0;
+      --soft1:#E6F4FF; --soft2:#E8F8F1; --soft3:#FFF3E6; --soft4:#F3E8FF;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+    .hero{display:grid;gap:10px;justify-items:center;text-align:center;padding:8px 0 18px}
+    .hero h1{font-family:'Fredoka',system-ui,sans-serif;font-size:clamp(28px,4vw,42px);margin:0}
+    .hero p{margin:0;color:var(--muted)}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:#ECFEFF;border:2px solid #BAE6FD;border-radius:9999px;padding:8px 12px;font-weight:700}
+    .tabs{display:flex;justify-content:center;gap:10px;margin:10px 0 20px}
+    .tab{border:2px solid #C7D2FE;padding:10px 16px;border-radius:12px;font-weight:700;background:white;cursor:pointer}
+    .tab[aria-selected="true"]{background:var(--blue);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:12px}
+    @media(min-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .tile{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.05)}
+    .soft1{background:var(--soft1)} .soft2{background:var(--soft2)} .soft3{background:var(--soft3)} .soft4{background:var(--soft4)}
+    .row{display:flex;align-items:center;gap:10px}
+    .row i{font-size:28px}
+    .label{font-weight:700}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .hidden{display:none}
+
+    /* Parent Comms */
+    .panel{display:grid;grid-template-columns:320px 1fr;gap:14px}
+    @media(max-width:900px){.panel{grid-template-columns:1fr}}
+    .card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:14px}
+    .contact{display:flex;align-items:center;gap:10px;padding:10px;border:2px solid var(--border);border-radius:12px;cursor:pointer}
+    .contact.active{border-color:var(--blue);background:#EFF6FF}
+    .pill{font-size:12px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:999px;padding:2px 8px;margin-left:auto}
+    .list{display:grid;gap:10px}
+    .thread{display:flex;flex-direction:column;gap:8px;height:340px;overflow:auto;padding-right:4px}
+    .msg{max-width:80%;padding:10px 12px;border-radius:12px}
+    .me{align-self:flex-end;background:#DCFCE7;border:2px solid #86EFAC}
+    .them{align-self:flex-start;background:#E0EAFF;border:2px solid #BFDBFE}
+    .composer{display:flex;gap:8px;margin-top:10px}
+    input, textarea, select{width:100%;padding:10px;border:2px solid var(--border);border-radius:12px;font:inherit}
+    button.primary{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+    button.ghost{background:#fff;border:2px solid var(--border);border-radius:999px;padding:6px 10px;cursor:pointer}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .consent{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:14px;color:var(--muted)}
+    .section-title{font-weight:800;margin:4px 0 8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <span class="badge"><i class="ph ph-brain"></i> TogetherMind Spectrum</span>
+      <h1>Disability is a spectrum. Let’s support it—together.</h1>
+      <p>Parents and children share one calm space. Kid Mode for learning. Parent Mode for coordination with teachers, therapists, and doctors.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button id="tabKid" class="tab" aria-selected="true" aria-controls="kidPanel">Kid Mode</button>
+      <button id="tabParent" class="tab" aria-selected="false" aria-controls="parentPanel">Parent Mode</button>
+    </div>
+
+    <!-- KID MODE (sample tiles) -->
+    <section id="kidPanel" role="tabpanel" aria-labelledby="tabKid">
+      <div class="grid">
+        <div class="tile soft1"><div class="row"><i class="ph ph-chat-text"></i><span class="label">AAC</span></div><p class="sub">Tap-to-talk board</p></div>
+        <div class="tile soft2"><div class="row"><i class="ph ph-speaker-high"></i><span class="label">Speech</span></div><p class="sub">Practice sounds</p></div>
+        <div class="tile soft3"><div class="row"><i class="ph ph-book"></i><span class="label">Reading</span></div><p class="sub">Stories & phonics</p></div>
+        <div class="tile soft4"><div class="row"><i class="ph ph-game-controller"></i><span class="label">Games</span></div><p class="sub">Learning play</p></div>
+        <div class="tile soft1"><div class="row"><i class="ph ph-calendar-check"></i><span class="label">Daily Routine</span></div><p class="sub">First / Then steps</p></div>
+        <div class="tile soft2"><div class="row"><i class="ph ph-pencil"></i><span class="label">Drawing</span></div><p class="sub">Create art</p></div>
+      </div>
+    </section>
+
+    <!-- PARENT MODE (COMMUNICATION HUB) -->
+    <section id="parentPanel" class="hidden" role="tabpanel" aria-labelledby="tabParent">
+      <div class="panel">
+        <!-- Contacts -->
+        <div class="card">
+          <div class="section-title">Your Team</div>
+          <div class="list" id="contactList"></div>
+          <hr style="border:none;border-top:2px solid var(--border);margin:12px 0">
+          <div class="section-title">Quick Update</div>
+          <div style="display:grid;gap:8px">
+            <select id="updateType">
+              <option value="Daily Check‑in">Daily Check‑in</option>
+              <option value="Behavior Note">Behavior Note</option>
+              <option value="Medical Update">Medical Update</option>
+            </select>
+            <textarea id="updateText" rows="3" placeholder="e.g., Slept well, ate waffles, headphones helpful on the bus."></textarea>
+            <div class="chips">
+              <button class="ghost" onclick="addTemplate('Good day 🙂')">Good day 🙂</button>
+              <button class="ghost" onclick="addTemplate('Rough morning, noise triggers.')">Rough morning</button>
+              <button class="ghost" onclick="addTemplate('Reminder: IEP meeting next Tuesday 2pm')">IEP reminder</button>
+            </div>
+            <div class="consent">
+              <input type="checkbox" id="shareAll" />
+              <label for="shareAll">Share this update with all selected contacts</label>
+            </div>
+            <button class="primary" onclick="sendBulkUpdate()"><i class="ph ph-paper-plane-right"></i> Send Update</button>
+          </div>
+        </div>
+
+        <!-- Thread -->
+        <div class="card">
+          <div class="section-title" id="threadTitle">Conversation</div>
+          <div class="thread" id="thread"></div>
+          <div class="composer">
+            <input id="message" placeholder="Type a message to your team…"/>
+            <button class="primary" onclick="sendMessage()"><i class="ph ph-paper-plane-tilt"></i> Send</button>
+          </div>
+          <div class="chips">
+            <button class="ghost" onclick="quick('How was today?')">How was today?</button>
+            <button class="ghost" onclick="quick('Any homework or notes for us?')">Homework?</button>
+            <button class="ghost" onclick="quick('Any triggers we should know about this week?')">Triggers?</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer style="text-align:center;color:var(--muted);margin:14px 0 4px;font-size:14px">TogetherMind Spectrum • Parents & child in one app • Communication that feels natural.</footer>
+  </div>
+
+  <script>
+    // PRODUCT INTERPRETATION:
+    // TogetherMind Spectrum = a shared app for kids & parents. This prototype
+    // focuses on Parent Mode's Communication Hub: chat with teachers, therapists, doctors.
+
+    // Contacts (example data)
+    const contacts = [
+      { id:'lee', name:'Ms. Lee', role:'Teacher', color:'#DBEAFE' },
+      { id:'gomez', name:'Dr. Gomez', role:'Speech Therapist', color:'#DCFCE7' },
+      { id:'chen', name:'Dr. Chen', role:'Pediatrician', color:'#FCE7F3' }
+    ];
+
+    let active = contacts[0].id;
+
+    function renderContacts(){
+      const box = document.getElementById('contactList');
+      box.innerHTML = contacts.map(c=>`
+        <label class="contact ${c.id===active? 'active':''}" style="background:${c.id===active? c.color:'white'}">
+          <input type="checkbox" class="sel" data-id="${c.id}" ${c.id===active?'checked':''} style="margin-right:6px"/>
+          <i class="ph ph-user-circle"></i>
+          <div>
+            <div><strong>${c.name}</strong></div>
+            <div style="font-size:12px;color:var(--muted)">${c.role}</div>
+          </div>
+          <span class="pill">Contact</span>
+        </label>
+      `).join('');
+
+      [...box.querySelectorAll('.contact')].forEach((el,idx)=>{
+        el.addEventListener('click', (e)=>{
+          if(e.target.classList.contains('sel')) return; // keep checkbox click
+          active = contacts[idx].id; renderContacts(); loadThread();
+        });
+      });
+    }
+
+    const storeKey = (id)=>`tm_thread_${id}`;
+
+    function loadThread(){
+      const data = JSON.parse(localStorage.getItem(storeKey(active))||'[]');
+      const thr = document.getElementById('thread');
+      document.getElementById('threadTitle').innerText = `Conversation with ${contacts.find(c=>c.id===active).name}`;
+      thr.innerHTML = data.map(m=>`<div class="msg ${m.me?'me':'them'}">${m.text}</div>`).join('');
+      thr.scrollTop = thr.scrollHeight;
+    }
+
+    function pushMsg(id, obj){
+      const data = JSON.parse(localStorage.getItem(storeKey(id))||'[]');
+      data.push(obj); localStorage.setItem(storeKey(id), JSON.stringify(data));
+    }
+
+    function sendMessage(){
+      const input = document.getElementById('message');
+      const text = input.value.trim(); if(!text) return;
+      pushMsg(active, { me:true, text});
+      input.value=''; loadThread();
+      // Simulated reply
+      setTimeout(()=>{ pushMsg(active,{ me:false, text:'Thanks for the update!'}); loadThread(); }, 600);
+    }
+
+    function quick(t){ document.getElementById('message').value = t; }
+    function addTemplate(t){ const box = document.getElementById('updateText'); box.value = (box.value+ (box.value?' ':'') + t).trim(); }
+
+    function sendBulkUpdate(){
+      const msg = (document.getElementById('updateType').value + ': ' + document.getElementById('updateText').value).trim();
+      if(!msg){ alert('Write a short update first.'); return; }
+      const selected = [...document.querySelectorAll('.sel:checked')].map(x=>x.dataset.id);
+      if(selected.length===0){ alert('Select at least one contact.'); return; }
+      selected.forEach(id=> pushMsg(id, { me:true, text: msg }));
+      document.getElementById('updateText').value='';
+      loadThread();
+      alert('Update sent to: ' + selected.map(id=>contacts.find(c=>c.id===id).name).join(', '));
+    }
+
+    // Tabs
+    const tabKid = document.getElementById('tabKid');
+    const tabParent = document.getElementById('tabParent');
+    const kidPanel = document.getElementById('kidPanel');
+    const parentPanel = document.getElementById('parentPanel');
+    tabKid.addEventListener('click', ()=>{ tabKid.setAttribute('aria-selected', true); tabParent.setAttribute('aria-selected', false); kidPanel.classList.remove('hidden'); parentPanel.classList.add('hidden'); });
+    tabParent.addEventListener('click', ()=>{ tabKid.setAttribute('aria-selected', false); tabParent.setAttribute('aria-selected', true); kidPanel.classList.add('hidden'); parentPanel.classList.remove('hidden'); });
+
+    // init
+    renderContacts(); loadThread();
+  </script>
+</body>
+</html>
